@@ -1,15 +1,17 @@
 /*====================================
         LOADER
 ====================================*/
+window.addEventListener("load", () => {
+  const loader = document.querySelector(".loader");
 
-window.addEventListener("load",()=>{
+  setTimeout(() => {
+    if (loader) {
+      loader.classList.add("hide");
+    }
 
-    const loader=document.querySelector(".loader");
-
-    setTimeout(()=>{
-
-        loader.classList.add("hide");
-
-    },2500);
-
+    // Refresh GSAP ScrollTrigger AFTER loader disappears
+    if (typeof ScrollTrigger !== "undefined") {
+      ScrollTrigger.refresh();
+    }
+  }, 2500); // Triggers GSAP recalculation right when loader hides
 });
