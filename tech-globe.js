@@ -9,7 +9,7 @@
     bolted-on widget.
 =====================================*/
 
-import * as THREE from ".three.module.min.js";
+import * as THREE from "./three.module.min.js";
 
 (() => {
 
