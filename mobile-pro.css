@@ -181,3 +181,131 @@ body.loaded :is(.profile-circle,.hero h4,.hero h1,.hero h3,.hero-left p,.buttons
 .testimonial-stars i:nth-child(4){animation-delay:.75s}
 .testimonial-stars i:nth-child(5){animation-delay:1s}
 @keyframes twinkle{50%{transform:scale(1.28);filter:drop-shadow(0 0 6px rgba(255,184,0,.9))}}
+/*===================================================
+  COMPACT MOBILE - smaller sizes on phones/tablets
+  (nothing is removed, everything is just tighter)
+===================================================*/
+@media (max-width:992px){
+body{font-size:14px;--mp:16px}
+
+/* top bar: one slim fixed row, search sits under it */
+body main{padding:calc(62px + env(safe-area-inset-top,0px)) var(--mp) 40px;overflow-x:clip}
+body .topbar{display:contents}
+body main::before{content:"";position:fixed;top:0;left:0;right:0;height:calc(56px + env(safe-area-inset-top,0px));background:rgba(7,11,20,.9);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);z-index:59}
+body.light-mode main::before{background:rgba(255,255,255,.92)}
+body .menu-toggle,body .theme-toggle,body .profile{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));z-index:61}
+body .menu-toggle{left:var(--mp)}
+body .theme-toggle{right:var(--mp)}
+body .menu-toggle,body .theme-toggle{width:40px;height:40px;border-radius:12px;font-size:15px}
+body .profile{left:calc(var(--mp) + 52px);right:calc(var(--mp) + 52px);height:40px;display:flex;align-items:center;gap:10px;min-width:0}
+body .profile img{width:34px;height:34px;border-width:2px}
+body .profile h3{font-size:14px;line-height:1.2}
+body .profile p{font-size:11px;line-height:1.2}
+body .search{width:100%;flex:none;margin:10px 0 0}
+body .search input{height:42px;padding:0 40px 0 14px;border-radius:12px;font-size:16px}
+body .search i{font-size:14px}
+
+/* loader */
+body .loader-logo{width:72px;height:72px;font-size:30px}
+body .loader-content h2{font-size:26px}
+body .loader-content span{font-size:13px}
+body .loader-bar{width:200px;height:5px;margin-top:22px}
+
+/* hero */
+body .hero{padding-top:20px}
+body .hero-left{gap:16px}
+body .profile-circle{width:132px;height:132px;border-width:4px}
+body .hero h4{font-size:14px;margin-bottom:4px}
+body .hero h1{font-size:clamp(24px,8vw,30px);line-height:1.15}
+body .hero h3{font-size:15px;margin-bottom:10px}
+body .hero p{font-size:13.5px;line-height:1.7}
+body .buttons{gap:10px;margin-top:18px}
+body .btn,body .btn-outline{padding:12px 8px;font-size:13.5px}
+body .hero-right{min-height:min(72vw,300px);margin-top:4px}
+
+/* spacing + titles */
+body .section{margin-top:52px;scroll-margin-top:76px}
+body #stats{margin-top:32px}
+body .marquee{margin:40px calc(var(--mp)*-1) 0;padding:12px 0}
+body .marquee span{font-size:26px;gap:18px;padding-right:18px}
+body .marquee span::after{width:7px;height:7px}
+body .section-title{margin-bottom:20px;padding-bottom:12px}
+body .section-title h2{font-size:22px;line-height:1.2}
+body .glass-card{padding:18px;border-radius:16px}
+body #about .glass-card p{font-size:14px;line-height:1.75}
+
+/* stats */
+body .stats{gap:10px}
+body .stat-card{padding:14px 8px;border-radius:14px}
+body #stats .stat-card i{font-size:20px;margin-bottom:6px}
+body #stats .stat-card h2{font-size:22px}
+body #stats .stat-card p{font-size:11.5px}
+
+/* globe */
+body .globe-wrap{gap:18px}
+body .globe-canvas-wrap{height:min(72vw,280px)}
+body .globe-info h3{font-size:17px;margin-bottom:8px}
+body .globe-info p{font-size:13.5px;line-height:1.7;margin-bottom:14px}
+body .globe-points{gap:10px}
+body .globe-points li{font-size:13.5px;gap:10px}
+body .globe-points i{width:30px;height:30px;font-size:12px}
+
+/* projects */
+body .filter-buttons{gap:8px;margin-bottom:16px}
+body .filter-btn{padding:8px 16px;font-size:12.5px}
+body #projects .projects{gap:14px}
+body #projects .project > img{height:150px}
+body #projects .project-content{padding:16px}
+body #projects .project-content h3{font-size:17px;margin-bottom:6px}
+body #projects .project-content p{font-size:13px;line-height:1.65}
+body #projects .tags{gap:6px;margin-top:12px}
+body #projects .tags span{padding:4px 11px;font-size:11px}
+body .btn-demo{margin-top:14px;padding:10px 16px;font-size:13px}
+
+/* skills */
+body .skills{gap:10px}
+body .skill{padding:14px 8px}
+body .skill img{width:36px;height:36px;margin:0 auto 8px}
+body .skill h4{font-size:12.5px}
+body .skill-progress{height:5px;margin-top:8px}
+
+/* services + experience */
+body .services{gap:10px}
+body .service{padding:14px;gap:4px 14px}
+body .service i{width:44px;height:44px;font-size:20px;border-radius:12px}
+body .service h3{font-size:15px}
+body .service p{font-size:12.5px;line-height:1.6}
+body .timeline{padding-left:26px}
+body .timeline-item{margin-bottom:22px}
+body .timeline-item h3{font-size:16px}
+body .timeline-item p{font-size:13px}
+
+/* testimonials */
+body .testimonial-card{flex-basis:80%;padding:18px;border-radius:16px}
+body .testimonial-stars{font-size:11px;margin-bottom:10px}
+body .testimonial-quote{font-size:13px;line-height:1.7;margin-bottom:14px}
+body .testimonial-author{padding-top:12px}
+body .testimonial-author h4{font-size:14px}
+body .testimonial-author span{font-size:12px}
+
+/* contact + footer */
+body .contact-box{gap:12px}
+body .contact-info,body .contact-form{padding:16px;border-radius:16px}
+body .contact-info div{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+body .contact-info div div{display:block;margin:0}
+body .contact-info i{width:38px;height:38px;display:grid;place-items:center;border-radius:10px;font-size:17px;background:rgba(0,212,255,.1)}
+body .contact-info h3{font-size:14px}
+body .contact-info p{font-size:12.5px}
+body .contact-form input,body .contact-form textarea{padding:12px 14px;margin-bottom:12px;border-radius:12px;font-size:16px}
+body .contact-form textarea{height:110px}
+body .contact-form .btn{padding:13px;font-size:14.5px}
+body footer{margin-top:44px;padding:24px 8px calc(24px + env(safe-area-inset-bottom,0px))}
+body footer h2{font-size:19px}
+body footer p{font-size:12px;line-height:1.7}
+body .top-btn{width:42px!important;height:42px!important;font-size:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px))!important;right:14px!important}
+
+/* side menu */
+body .sidebar nav a{padding:11px 14px;gap:12px;font-size:14px;border-radius:12px}
+body .sidebar i{font-size:15px}
+body .social a{width:36px;height:36px}
+}
