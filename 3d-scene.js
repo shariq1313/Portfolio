@@ -397,6 +397,155 @@ import * as THREE from "./three.module.min.js";
 
     laptopGroup.add(laptopGlow);
 
+    /*====================================
+  REAL 3D LAPTOP (replaces the flat picture)
+  The old flat meshes are only hidden, not deleted.
+=====================================*/
+laptop.visible = false;
+laptopBody.visible = false;
+laptopGlow.visible = false;
+
+const lap3d = new THREE.Group();
+lap3d.scale.setScalar(isMobile ? 0.78 : 0.72);
+lap3d.position.y = -0.05;
+laptopGroup.add(lap3d);
+
+/* rounded slab helper */
+function slab(w, h, d, r, b) {
+  const s = new THREE.Shape(), x = -w / 2, y = -h / 2;
+  s.moveTo(x + r, y);
+  s.lineTo(x + w - r, y); s.quadraticCurveTo(x + w, y, x + w, y + r);
+  s.lineTo(x + w, y + h - r); s.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  s.lineTo(x + r, y + h); s.quadraticCurveTo(x, y + h, x, y + h - r);
+  s.lineTo(x, y + r); s.quadraticCurveTo(x, y, x + r, y);
+  const g = new THREE.ExtrudeGeometry(s, { depth: d, bevelEnabled: true, bevelSize: b, bevelThickness: b, bevelSegments: 3 });
+  g.translate(0, 0, -d / 2);
+  return g;
+}
+
+const BY = -1.5;
+const alu = new THREE.MeshPhysicalMaterial({ color: 0x4a5688, metalness: 0.55, roughness: 0.34, clearcoat: 0.5, emissive: 0x0b1230, emissiveIntensity: 0.7 });
+const dark = new THREE.MeshStandardMaterial({ color: 0x070b18, roughness: 0.5, metalness: 0.3 });
+
+/* base, keyboard well, trackpad, hinge */
+const base = new THREE.Mesh(slab(4.3, 2.9, 0.12, 0.2, 0.03).rotateX(-Math.PI / 2), alu);
+base.position.y = BY;
+lap3d.add(base);
+const well = new THREE.Mesh(new THREE.BoxGeometry(3.95, 0.02, 1.75), dark);
+well.position.set(0, BY + 0.095, -0.2);
+lap3d.add(well);
+const pad = new THREE.Mesh(slab(1.25, 0.78, 0.01, 0.08, 0.004).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: 0x5a67a0, roughness: 0.3, metalness: 0.4 }));
+pad.position.set(0, BY + 0.1, 1.02);
+lap3d.add(pad);
+const hinge = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.065, 3.6, 20).rotateZ(Math.PI / 2), dark);
+hinge.position.set(0, BY + 0.12, -1.42);
+lap3d.add(hinge);
+
+/* keys: dark caps + glowing tops that ripple in colour */
+const COLS = 14, ROWS = 5, KEYS = COLS * ROWS, dummy = new THREE.Object3D();
+const caps = new THREE.InstancedMesh(new THREE.BoxGeometry(0.23, 0.05, 0.23), new THREE.MeshStandardMaterial({ color: 0x10162e, roughness: 0.45, metalness: 0.2 }), KEYS);
+const tops = new THREE.InstancedMesh(new THREE.PlaneGeometry(0.16, 0.16).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0xffffff }), KEYS);
+for (let i = 0; i < KEYS; i++) {
+  const c = i % COLS, r = Math.floor(i / COLS);
+  dummy.position.set((c - (COLS - 1) / 2) * 0.27, BY + 0.12, -0.78 + r * 0.27);
+  dummy.updateMatrix();
+  caps.setMatrixAt(i, dummy.matrix);
+  dummy.position.y = BY + 0.148;
+  dummy.updateMatrix();
+  tops.setMatrixAt(i, dummy.matrix);
+  tops.setColorAt(i, new THREE.Color(0x00d4ff));
+}
+lap3d.add(caps, tops);
+
+/* lid: hinge pivot, metal shell, black bezel, live screen */
+const lid = new THREE.Group();
+lid.position.set(0, BY + 0.12, -1.42);
+lid.rotation.x = 1.45;
+lap3d.add(lid);
+const shell = new THREE.Mesh(slab(4.3, 2.75, 0.07, 0.18, 0.025).translate(0, 1.375, 0), alu);
+const bezel = new THREE.Mesh(slab(4.14, 2.59, 0.004, 0.12, 0.003).translate(0, 1.375, 0.064), new THREE.MeshStandardMaterial({ color: 0x04060d, roughness: 0.25, metalness: 0.3 }));
+lid.add(shell, bezel);
+
+const sc = document.createElement("canvas");
+sc.width = isMobile ? 768 : 1024;
+sc.height = isMobile ? 480 : 640;
+const g2 = sc.getContext("2d");
+const tex = new THREE.CanvasTexture(sc);
+if (THREE.SRGBColorSpace) tex.colorSpace = THREE.SRGBColorSpace;
+tex.anisotropy = 4;
+const screen = new THREE.Mesh(new THREE.PlaneGeometry(3.9, 2.3), new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }));
+screen.position.set(0, 1.4, 0.08);
+lid.add(screen);
+const logo = new THREE.Mesh(new THREE.CircleGeometry(0.15, 32), new THREE.MeshBasicMaterial({ color: 0x00d4ff }));
+logo.position.set(0, 1.375, -0.066);
+logo.rotation.y = Math.PI;
+lid.add(logo);
+const screenLight = new THREE.PointLight(0x7aa2ff, 5, 7, 2);
+screenLight.position.set(0, BY + 1.3, 1.2);
+lap3d.add(screenLight);
+
+/* code that scrolls on the screen */
+const code = [
+  '<section class="hero">', '  <h1>Shariq Ur Rafay</h1>', '  <h3>Front-End Developer</h3>',
+  '  <a class="btn">View Projects</a>', '</section>', '',
+  '.hero {', '  display: grid;', '  gap: 40px;', '}', '',
+  'gsap.from(".hero h1", {', '  y: 60,', '  opacity: 0,', '  duration: 1.2', '});', '',
+  '// 40 projects shipped', 'const clients = 25;', ''
+];
+const col = { tag: "#4dd8ff", attr: "#a47cff", str: "#ffc86b", txt: "#dfe6ff", dim: "#5b6690" };
+function paint(line, x, y) {
+  const re = /(<\/?[a-z0-9]+|\/?>|"[^"]*"|\/\/.*|\b(?:const|class|gsap|from)\b|\b\d+\b|[{}();:,])/g;
+  let last = 0, m, cx = x;
+  const put = (t, c) => { g2.fillStyle = c; g2.fillText(t, cx, y); cx += g2.measureText(t).width; };
+  while ((m = re.exec(line))) {
+    if (m.index > last) put(line.slice(last, m.index), col.txt);
+    const t = m[0];
+    put(t, t[0] === "<" || t[0] === ">" || t.startsWith("/>") ? col.tag : t[0] === '"' || /^\d/.test(t) ? col.str : t.startsWith("//") || /^[{}();:,]$/.test(t) ? col.dim : col.attr);
+    last = m.index + t.length;
+  }
+  if (last < line.length) put(line.slice(last), col.txt);
+}
+let scroll = 0;
+function drawScreen() {
+  const W = sc.width, H = sc.height, s = W / 1024, bar = 54 * s, lh = 40 * s;
+  const bg = g2.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, "#0a0f24"); bg.addColorStop(1, "#1a1040");
+  g2.fillStyle = bg; g2.fillRect(0, 0, W, H);
+  g2.fillStyle = "rgba(255,255,255,.07)"; g2.fillRect(0, 0, W, bar);
+  ["#ff5f57", "#febc2e", "#28c840"].forEach((c, i) => { g2.fillStyle = c; g2.beginPath(); g2.arc((36 + i * 34) * s, bar / 2, 9 * s, 0, 6.283); g2.fill(); });
+  g2.font = (26 * s) + "px Consolas, Menlo, monospace";
+  g2.textBaseline = "middle";
+  const first = Math.floor(scroll), frac = scroll - first;
+  for (let i = 0; i < Math.ceil((H - bar) / lh) + 1; i++) {
+    const n = first + i, y = bar + (i + 0.5 - frac) * lh;
+    g2.fillStyle = "#3a4472"; g2.fillText(String(n + 1).padStart(2, "0"), 24 * s, y);
+    paint(code[n % code.length], 84 * s, y);
+  }
+  tex.needsUpdate = true;
+}
+drawScreen();
+
+/* motion: lid opens, gentle sway, key colour ripple, scrolling code */
+const kc = new THREE.Color();
+let n = 0;
+const update = (t) => {
+  lap3d.rotation.y = -0.1 + Math.sin(t * 0.55) * (isMobile ? 0.35 : 0.5);
+  for (let i = 0; i < KEYS; i++) {
+    const w = (Math.sin(t * 1.6 + i * 0.35) + 1) / 2;
+    kc.setHSL(0.5 + 0.17 * w, 1, 0.2 + 0.2 * w);
+    tops.setColorAt(i, kc);
+  }
+  tops.instanceColor.needsUpdate = true;
+  if (++n % 3 === 0 && !document.hidden) { scroll += 0.07; drawScreen(); }
+};
+if (window.gsap && !reducedMotion) {
+  gsap.to(lid.rotation, { x: -0.3, duration: 1.9, delay: 2.7, ease: "power3.out" });
+  gsap.ticker.add(update);
+} else {
+  lid.rotation.x = -0.3;
+  lap3d.rotation.y = -0.15;
+}
+
 
     /*====================================
         TECH BADGE SYSTEM
