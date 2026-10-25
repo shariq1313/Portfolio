@@ -1320,5 +1320,25 @@ badgeGroup.children.forEach((badge, index) => {
 
 });
     }
-
+/*====================================
+  MOBILE FIT: sharp, undistorted, nothing cut off
+  (phones only - desktop is not touched)
+=====================================*/
+if (isMobile) {
+  const fitMobile = () => {
+    const w = Math.max(mount.clientWidth, 280);
+    const h = Math.max(mount.clientHeight, 200);
+    renderer.setPixelRatio(Math.min((window.devicePixelRatio || 1) * 1.5, 3));
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.position.z = Math.max(8.4, 12 / camera.aspect);
+    camera.updateProjectionMatrix();
+  };
+  fitMobile();
+  window.addEventListener("resize", fitMobile, { passive: true });
+  if (typeof lap3d !== "undefined") lap3d.scale.setScalar(0.9);
+  badgeGroup.children.forEach((b) => {
+    b.userData.baseX *= 0.85;
+  });
+}
 })();
